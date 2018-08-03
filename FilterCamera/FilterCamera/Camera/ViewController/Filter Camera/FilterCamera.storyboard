@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--FilterCamera-->
+        <scene sceneID="WLx-Vi-VH5">
+            <objects>
+                <viewController storyboardIdentifier="FilterCameraViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Dc7-Wc-t41" customClass="FilterCameraViewController" customModule="FilterCamera" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="oLW-7X-U0z">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7t2-hF-HUT">
+                                <rect key="frame" x="0.0" y="20" width="318" height="598"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </scrollView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ff8-Ea-Otp">
+                                <rect key="frame" x="148" y="498" width="80" height="80"/>
+                                <color key="backgroundColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="MZY-An-dGG"/>
+                                    <constraint firstAttribute="width" secondItem="Ff8-Ea-Otp" secondAttribute="height" id="jUG-ks-jqc"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="recoderVideo:" destination="Dc7-Wc-t41" eventType="touchUpInside" id="Ikt-CQ-ZUq"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qFy-xz-6bz">
+                                <rect key="frame" x="325" y="40" width="40" height="32"/>
+                                <color key="backgroundColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="qFy-xz-6bz" secondAttribute="height" multiplier="5:4" id="2rC-I2-QlS"/>
+                                    <constraint firstAttribute="width" constant="40" id="PUC-ZZ-b5x"/>
+                                </constraints>
+                                <state key="normal" image="imageChange"/>
+                                <connections>
+                                    <action selector="switchPosition:" destination="Dc7-Wc-t41" eventType="touchUpInside" id="Oq5-BT-MIY"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HeS-NZ-OKy">
+                                <rect key="frame" x="248" y="518" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="Lwh-bl-Y9t"/>
+                                    <constraint firstAttribute="height" constant="40" id="XQv-vV-jh5"/>
+                                </constraints>
+                                <state key="normal" image="pause"/>
+                                <connections>
+                                    <action selector="pauseRecording:" destination="Dc7-Wc-t41" eventType="touchUpInside" id="J1P-yC-WKF"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bh0-nB-Avg">
+                                <rect key="frame" x="323" y="438" width="44" height="40"/>
+                                <color key="backgroundColor" red="0.0" green="0.97680455450000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="bh0-nB-Avg" secondAttribute="height" multiplier="27:25" id="Hig-nd-UNE"/>
+                                    <constraint firstAttribute="height" constant="40" id="kbD-fu-a1A"/>
+                                </constraints>
+                                <state key="normal" image="mask"/>
+                                <connections>
+                                    <action selector="showFilters:" destination="Dc7-Wc-t41" eventType="touchUpInside" id="9O3-gu-VFH"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8rD-Nt-21P">
+                                <rect key="frame" x="327.5" y="82" width="35" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="35" id="NZN-hg-p2M"/>
+                                    <constraint firstAttribute="height" constant="35" id="Pr4-Az-gEV"/>
+                                </constraints>
+                                <state key="normal" image="sound"/>
+                                <connections>
+                                    <action selector="recordSound:" destination="Dc7-Wc-t41" eventType="touchUpInside" id="YYN-4C-EGD"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Ff8-Ea-Otp" firstAttribute="top" secondItem="bh0-nB-Avg" secondAttribute="bottom" constant="20" id="0p1-sE-DWe"/>
+                            <constraint firstItem="qFy-xz-6bz" firstAttribute="top" secondItem="bJQ-E4-8eX" secondAttribute="top" constant="20" id="Bet-BZ-sYs"/>
+                            <constraint firstItem="bh0-nB-Avg" firstAttribute="centerX" secondItem="qFy-xz-6bz" secondAttribute="centerX" id="DK8-XZ-YNC"/>
+                            <constraint firstItem="7t2-hF-HUT" firstAttribute="leading" secondItem="bJQ-E4-8eX" secondAttribute="leading" id="E8P-gi-dek"/>
+                            <constraint firstItem="Ff8-Ea-Otp" firstAttribute="centerX" secondItem="oLW-7X-U0z" secondAttribute="centerX" id="OhN-Sl-efQ"/>
+                            <constraint firstItem="bJQ-E4-8eX" firstAttribute="trailing" secondItem="qFy-xz-6bz" secondAttribute="trailing" constant="10" id="Q32-MP-Vfe"/>
+                            <constraint firstItem="8rD-Nt-21P" firstAttribute="centerX" secondItem="qFy-xz-6bz" secondAttribute="centerX" id="QQd-cG-ayh"/>
+                            <constraint firstItem="8rD-Nt-21P" firstAttribute="top" secondItem="qFy-xz-6bz" secondAttribute="bottom" constant="10" id="SkQ-cz-4bb"/>
+                            <constraint firstItem="HeS-NZ-OKy" firstAttribute="centerY" secondItem="Ff8-Ea-Otp" secondAttribute="centerY" id="Uq1-ZL-gc1"/>
+                            <constraint firstItem="7t2-hF-HUT" firstAttribute="bottom" secondItem="bJQ-E4-8eX" secondAttribute="bottom" id="VYP-Tx-ENL"/>
+                            <constraint firstItem="HeS-NZ-OKy" firstAttribute="leading" secondItem="Ff8-Ea-Otp" secondAttribute="trailing" constant="20" id="nys-6Y-iOJ"/>
+                            <constraint firstItem="bJQ-E4-8eX" firstAttribute="bottom" secondItem="Ff8-Ea-Otp" secondAttribute="bottom" constant="40" id="tBw-kE-32Z"/>
+                            <constraint firstItem="bh0-nB-Avg" firstAttribute="leading" secondItem="7t2-hF-HUT" secondAttribute="trailing" constant="5" id="xuc-I4-sMK"/>
+                            <constraint firstItem="7t2-hF-HUT" firstAttribute="top" secondItem="bJQ-E4-8eX" secondAttribute="top" id="zBf-Zc-Sft"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="bJQ-E4-8eX"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="FilterCamera" id="Pwe-M5-vYt"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="changePositionButton" destination="qFy-xz-6bz" id="Nek-uS-1IL"/>
+                        <outlet property="filterButton" destination="bh0-nB-Avg" id="POI-pG-kBS"/>
+                        <outlet property="filterScrollView" destination="7t2-hF-HUT" id="RL5-mu-Lvz"/>
+                        <outlet property="pauseButton" destination="HeS-NZ-OKy" id="h3w-SD-g7W"/>
+                        <outlet property="recordButton" destination="Ff8-Ea-Otp" id="Vl2-YW-3qu"/>
+                        <outlet property="recordSoundButton" destination="8rD-Nt-21P" id="XDb-u0-nJd"/>
+                        <outlet property="scrollLeftConstraint" destination="E8P-gi-dek" id="5OS-g0-ZnE"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gcH-5C-KQS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-92" y="55.322338830584712"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="imageChange" width="50" height="40"/>
+        <image name="mask" width="50" height="46"/>
+        <image name="pause" width="60" height="60"/>
+        <image name="sound" width="50" height="50"/>
+    </resources>
+</document>
