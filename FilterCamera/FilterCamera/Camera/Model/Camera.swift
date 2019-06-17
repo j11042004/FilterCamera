@@ -32,8 +32,9 @@ class Camera: NSObject {
     var flashMode : AVCaptureDevice.FlashMode = .off
     /// 鏡頭前後
     var currentCameraPosition : CameraPosition?
-    // 相機種類
+    // 背境頭種類
     let backCameraType : AVCaptureDevice.DeviceType = UIDevice.current.modelName == .iPhoneX ? .builtInDualCamera : .builtInWideAngleCamera
+    /// 前鏡頭總類
     let frontCameraType : AVCaptureDevice.DeviceType = UIDevice.current.modelName == .iPhoneX ? .builtInTrueDepthCamera: .builtInWideAngleCamera
     // 相片轉向的角度
     var fixAngles : Double = 0
@@ -53,7 +54,6 @@ extension Camera {
             devicePosition = .back
             break
         }
-        
         func caonfigureCaptureDevice() throws {
             // 預設 Session 是背景相機
             let session = AVCaptureDevice.DiscoverySession(deviceTypes: [frontCameraType , backCameraType], mediaType: AVMediaType.video, position: devicePosition)
@@ -126,7 +126,6 @@ extension Camera {
                 self.session.addOutput(self.photoOutput!)
             }
             self.sessionPrepare = true
-            print(self.session.isRunning)
         }
         // MARK: 開始執行準備Camera
         DispatchQueue(label: "prepare").async {

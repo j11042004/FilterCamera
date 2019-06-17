@@ -12,10 +12,11 @@ import AVKit
 class VideoViewController: AVPlayerViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        if let avUrlAsset = self.player?.currentItem?.asset  as? AVURLAsset {
+            let storedUrl = avUrlAsset.url
+        }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

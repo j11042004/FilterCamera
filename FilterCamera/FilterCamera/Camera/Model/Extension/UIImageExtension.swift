@@ -11,7 +11,6 @@ import UIKit
 import Photos
 
 extension UIImage {
-    
     /// 將圖片進行轉向
     ///
     /// - Parameter radians: 轉向的角度
@@ -94,7 +93,7 @@ extension UIImage {
     }
     
     /// 圖片轉向
-    func orientationFlip(orientation : UIImageOrientation)->UIImage{
+    func orientationFlip(orientation : UIImage.Orientation)->UIImage{
         var flipImage : UIImage!
         if self.cgImage != nil {
             flipImage = UIImage(cgImage: self.cgImage!, scale: self.scale, orientation: orientation)
@@ -107,7 +106,7 @@ extension UIImage {
         return flipImage
     }
     /// 將圖片存到相簿
-    func savedInPhotoLibrary(){
+    func savedInPhotoLibrary(completion:@escaping (_ success : Bool) -> Void){
         // 去詢問權限
         PHPhotoLibrary.requestAuthorization { (status) in
             switch status {
@@ -117,19 +116,27 @@ extension UIImage {
                 do {
                     try PHPhotoLibrary.shared().performChangesAndWait {
                         PHAssetChangeRequest.creationRequestForAsset(from: self)
+                        completion(true)
                     }
                 }catch {
                     print("save image fail :\(error.localizedDescription)")
+                    completion(false)
                 }
                 break
             case .notDetermined :
                 NSLog("未決定")
+                completion(false)
                 break
             case .denied:
                 NSLog("拒絕")
+                completion(false)
                 break
             case .restricted :
                 NSLog("有限制")
+                completion(false)
+                break
+            @unknown default:
+                fatalError()
                 break
             }
         }

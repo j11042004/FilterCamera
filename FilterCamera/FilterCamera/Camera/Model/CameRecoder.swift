@@ -10,6 +10,7 @@ import UIKit
 import AVFoundation
 import AVKit
 import CoreImage
+import Photos
 // 濾鏡的方法
 enum FilterName:String {
     case none = ""
@@ -47,7 +48,7 @@ class CameRecoder: NSObject {
     let backCameraType : AVCaptureDevice.DeviceType = UIDevice.current.modelName == .iPhoneX ? .builtInDualCamera : .builtInWideAngleCamera
     /// 前景相機種類
     let frontCameraType : AVCaptureDevice.DeviceType = UIDevice.current.modelName == .iPhoneX ? .builtInTrueDepthCamera: .builtInWideAngleCamera
-
+    /// 濾鏡
     private var filter : CIFilter? = CIFilter(name: FilterName.none.rawValue)
     
     let filters : [String] = {
@@ -70,13 +71,14 @@ class CameRecoder: NSObject {
                 "棕色化效果",
 //                FilterName.exposureAdjust.rawValue,
 //                FilterName.colorMonochrome.rawValue,
-            FilterName.highlightShadowAdjust.rawValue
+                "陰影平衡"
         ]
     }()
     /// 將 Buffer 轉成 CIImage
     private lazy var context : CIContext = {
+        // 讓 GPU 去執行 濾鏡
         let eagleContext = EAGLContext(api: EAGLRenderingAPI.openGLES2)
-        let options = [kCIContextWorkingColorSpace : NSNull()]
+        let options = [CIContextOption.workingColorSpace : NSNull()]
         return CIContext(eaglContext: eagleContext!, options: options)
     }()
     
@@ -91,8 +93,6 @@ class CameRecoder: NSObject {
     private var isPaused : Bool = false
     private var currentSampleTime : CMTime?
     private var currentVideoDimensions : CMVideoDimensions?
-    
-    
     
     /// 準備錄影機
     public func prepareVideoCam(with view : UIView ,completion : (_ prepare : Bool)->Void){
@@ -130,27 +130,24 @@ class CameRecoder: NSObject {
         if session.canAddOutput(videoOutput){
             session.addOutput(videoOutput)
         }
-        
         // Session 輸出錄製的聲音
         let audioOutput = AVCaptureAudioDataOutput()
         if session.canAddOutput(audioOutput){
             session.addOutput(audioOutput)
             self.audioOutput = audioOutput
         }
-        
         // 簽訂 影像輸出 與 聲音輸出 Delegate
         audioOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "AudioQueue"))
         // AvassetWriter get Buffer Delegate
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "VideoQueue"))
-        
-        //MARK:- Fix 檢測人臉用
-//        let faceMetaDataOutput = AVCaptureMetadataOutput()
-//        faceMetaDataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-//        if session.canAddOutput(faceMetaDataOutput){
-//            session.addOutput(faceMetaDataOutput)
-//            // 設定辨識人臉
-//            faceMetaDataOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.face]
-//        }
+        //MARK: 檢測人臉
+        let faceMetaDataOutput = AVCaptureMetadataOutput()
+        faceMetaDataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+        if session.canAddOutput(faceMetaDataOutput){
+            session.addOutput(faceMetaDataOutput)
+            // 設定辨識人臉
+            faceMetaDataOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.face]
+        }
         
         // session 套用設定
         session.commitConfiguration()
@@ -166,6 +163,23 @@ class CameRecoder: NSObject {
         }
     }
     
+    /// 停止 Session 擷取畫面
+    public func stopCaptureFrame(){
+        DispatchQueue.main.async {
+            self.session.stopRunning()
+        }
+    }
+    /// 更新顯示畫面
+    public func updatePreviewLayer(){
+        guard self.previewLayer != nil ,
+            let superLayer = self.previewLayer?.superlayer
+            else {
+                return
+        }
+        UIView.animate(withDuration: 0.1) {
+            self.previewLayer?.frame = CGRect(x: 0, y: 0, width: superLayer.frame.width, height: superLayer.frame.height)
+        }
+    }
     /// 是否要錄製聲音
     public func recordAudio(with allow : Bool){
         /// 停止錄製聲音
@@ -203,12 +217,6 @@ class CameRecoder: NSObject {
         session.commitConfiguration()
     }
     
-    /// 停止 Session 擷取畫面
-    public func stopCaptureFrame(){
-        DispatchQueue.main.async {
-            self.session.stopRunning()
-        }
-    }
     /// Frame 放大
     func roomIn() {
         guard let zoomFactor = self.cameraDevice?.videoZoomFactor,
@@ -302,7 +310,6 @@ class CameRecoder: NSObject {
             return
         }
         self.session.removeInput(cameraInput)
-        NSLog("removed inputs count : \(self.session.inputs.count)")
         switch self.cameraPosition {
         case .front:
             self.cameraPosition = .back
@@ -320,10 +327,27 @@ class CameRecoder: NSObject {
             session.addInput(input)
             self.cameraDeviceInput = input
         }
-        NSLog("\(self.session.inputs.count)")
         self.session.commitConfiguration()
         
     }
+    /// 將影片存到相簿中
+    public func savedVideoInPhotoLibrary(){
+        PHPhotoLibrary.shared().performChanges({
+            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.movieUrl())
+        }) { saved, error in
+            if saved {
+                let alertController = UIAlertController(title: "Your video was successfully saved", message: nil, preferredStyle: .alert)
+                let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alertController.addAction(defaultAction)
+                DispatchQueue.main.async {
+                    UIApplication.shared.keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    
+    
+    
     //MARK:- Private Function
     /// 建立 AVAssetWriter
     private func createWriter(){
@@ -349,13 +373,14 @@ class CameRecoder: NSObject {
         
         // 輸入的影像會先被轉 -90 度
         assetWriterVideoInput.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 2.0)
-        
+        // 現在使用單獨的 kCFBooleanTrue 會回傳 CFBoolean
+        let cfTrue : CFBoolean = kCFBooleanTrue
         // 將圖片轉成影片的 buffer 設定
         let sourcePixelBufferAttributesDictionary : [String : Any] = [
             String(kCVPixelBufferPixelFormatTypeKey) : Int(kCMPixelFormat_32BGRA),
             String(kCVPixelBufferWidthKey) : Int(currentVideoDimensions!.width),
             String(kCVPixelBufferHeightKey) : Int(currentVideoDimensions!.height),
-            String(kCVPixelFormatOpenGLESCompatibility) : kCFBooleanTrue
+            String(kCVPixelFormatOpenGLESCompatibility) : cfTrue
         ]
         // 將 圖片 Buffer 轉成 影片
         assetWriterPixelBufferInput = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: assetWriterVideoInput, sourcePixelBufferAttributes: sourcePixelBufferAttributesDictionary)
@@ -447,7 +472,6 @@ extension CameRecoder : AVCaptureVideoDataOutputSampleBufferDelegate , AVCapture
                 }
             }
             
-            
             // 若有做轉向 在執行下面 Code
             //            var angle : CGFloat = 0
             //            switch UIDevice.current.orientation{
@@ -492,7 +516,8 @@ extension CameRecoder : AVCaptureVideoDataOutputSampleBufferDelegate , AVCapture
                         return
                     }
                     break
-                default : break
+                default :
+                    break
                 }
             }
         }
@@ -516,6 +541,13 @@ extension CameRecoder : AVCaptureVideoDataOutputSampleBufferDelegate , AVCapture
         returnImg = CIImage(cgImage: cgImg)
         return returnImg
     }
+    
+}
+extension CameRecoder : AVCaptureFileOutputRecordingDelegate{
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+        NSLog("完成錄影")
+    }
+    
     
 }
 extension CameRecoder : AVCaptureMetadataOutputObjectsDelegate {

@@ -19,10 +19,10 @@
             </objects>
             <point key="canvasLocation" x="-568" y="1099"/>
         </scene>
-        <!--FilterCameraViewController-->
+        <!--RecoderNavigationController-->
         <scene sceneID="yxM-ZH-AYg">
             <objects>
-                <viewControllerPlaceholder storyboardName="FilterCamera" referencedIdentifier="FilterCameraViewController" id="fXX-Jc-WH6" sceneMemberID="viewController">
+                <viewControllerPlaceholder storyboardName="FilterCamera" referencedIdentifier="RecoderNavigationController" id="fXX-Jc-WH6" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Item" id="M7U-bg-Lr8"/>
                 </viewControllerPlaceholder>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O2L-Vy-rbf" userLabel="First Responder" sceneMemberID="firstResponder"/>
