@@ -467,7 +467,8 @@ extension CameRecoder : AVCaptureVideoDataOutputSampleBufferDelegate , AVCapture
                 self.context.render(outputImage, to: newPixelBuffer!, bounds: outputImage.extent, colorSpace: nil)
                 // 將 新的Buffer 以及建立的時間 寫入 assetWriterPixelBufferInput，並取得是否寫入成功
                 if let success = self.assetWriterPixelBufferInput?.append(newPixelBuffer!, withPresentationTime: self.currentSampleTime!) ,
-                    !success {
+                    !success
+                {
                     NSLog("Pixel Buffer没有附加成功")
                 }
             }

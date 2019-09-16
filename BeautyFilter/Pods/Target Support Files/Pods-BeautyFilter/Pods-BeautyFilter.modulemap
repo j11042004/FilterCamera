@@ -1,0 +1,6 @@
+framework module Pods_BeautyFilter {
+  umbrella header "Pods-BeautyFilter-umbrella.h"
+
+  export *
+  module * { export * }
+}
